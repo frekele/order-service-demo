@@ -26,6 +26,41 @@ public class Order {
     private List<OrderItem> items = new ArrayList<>();
     private Money totalValue;
     private OrderStatus status;
-    private LocalDateTime receivedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
+    public void calculateTotal() {
+        Money total = Money.zero();
+        if (items != null) {
+            for (OrderItem item : items) {
+                total = total.add(item.getUnitPrice().multiply(item.getQuantity()));
+            }
+        }
+        this.totalValue = total;
+    }
+
+    public void markAsReceived() {
+        this.status = OrderStatus.RECEIVED;
+        this.touch();
+    }
+
+    public void markAsProcessing() {
+        this.status = OrderStatus.PROCESSING;
+        this.touch();
+    }
+
+    public void markAsCompleted() {
+        this.status = OrderStatus.COMPLETED;
+        this.touch();
+    }
+
+    public void markAsFailed() {
+        this.status = OrderStatus.FAILED;
+        this.touch();
+    }
+
+    private void touch() {
+        this.updatedAt = LocalDateTime.now();
+    }
 
 }
