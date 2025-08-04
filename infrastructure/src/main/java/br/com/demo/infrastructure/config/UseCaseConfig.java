@@ -1,5 +1,6 @@
 package br.com.demo.infrastructure.config;
 
+import br.com.demo.application.gateway.OrderEventGateway;
 import br.com.demo.application.gateway.OrderGateway;
 import br.com.demo.application.usecase.cancel.CancelOrderUseCase;
 import br.com.demo.application.usecase.cancel.DefaultCancelOrderUseCase;
@@ -20,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 public class UseCaseConfig {
 
     @Bean
-    public CreateOrderUseCase createOrderUseCase(OrderGateway orderGateway) {
-        return new DefaultCreateOrderUseCase(orderGateway);
+    public CreateOrderUseCase createOrderUseCase(OrderGateway orderGateway, OrderEventGateway orderEventGateway) {
+        return new DefaultCreateOrderUseCase(orderGateway, orderEventGateway);
     }
 
     @Bean

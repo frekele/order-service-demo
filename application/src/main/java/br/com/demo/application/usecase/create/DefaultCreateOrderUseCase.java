@@ -1,5 +1,6 @@
 package br.com.demo.application.usecase.create;
 
+import br.com.demo.application.gateway.OrderEventGateway;
 import br.com.demo.application.gateway.OrderGateway;
 import br.com.demo.domain.model.Order;
 import br.com.demo.domain.model.OrderItem;
@@ -12,6 +13,7 @@ import java.util.stream.Collectors;
 public class DefaultCreateOrderUseCase extends CreateOrderUseCase {
 
     private final OrderGateway orderGateway;
+    private final OrderEventGateway orderEventGateway;
 
     @Override
     public CreateOrderOutput execute(CreateOrderInput input) {
@@ -29,10 +31,10 @@ public class DefaultCreateOrderUseCase extends CreateOrderUseCase {
                 .collect(Collectors.toList());
 
         Order newOrder = Order.create(input.externalOrderId(), orderItems);
-        newOrder.startProcessing();
 
-        final Order order = this.orderGateway.save(newOrder);
-        return CreateOrderOutput.from(order.getId());
+        this.orderEventGateway.sendOrderCreated(newOrder);
+
+        return CreateOrderOutput.from(newOrder.getId());
     }
 
 }
