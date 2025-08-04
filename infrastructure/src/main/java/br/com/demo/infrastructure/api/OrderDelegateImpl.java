@@ -1,5 +1,7 @@
 package br.com.demo.infrastructure.api;
 
+import br.com.demo.application.usecase.cancel.CancelOrderInput;
+import br.com.demo.application.usecase.cancel.CancelOrderUseCase;
 import br.com.demo.application.usecase.create.CreateOrderInput;
 import br.com.demo.application.usecase.create.CreateOrderUseCase;
 import br.com.demo.application.usecase.get.GetOrderByIdInput;
@@ -26,6 +28,7 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
     private final CreateOrderUseCase createOrderUseCase;
     private final GetOrderByIdUseCase getOrderByIdUseCase;
     private final ListOrdersUseCase listOrdersUseCase;
+    private final CancelOrderUseCase cancelOrderUseCase;
     private final OrderMapper orderMapper;
 
     @Override
@@ -66,4 +69,13 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
 
         return ResponseEntity.ok(response);
     }
+
+    @Override
+    public ResponseEntity<Void> cancelOrder(UUID id) {
+        final var input = new CancelOrderInput(id);
+        this.cancelOrderUseCase.execute(input);
+
+        return ResponseEntity.noContent().build();
+    }
+
 }

@@ -1,6 +1,8 @@
 package br.com.demo.infrastructure.config;
 
 import br.com.demo.application.gateway.OrderGateway;
+import br.com.demo.application.usecase.cancel.CancelOrderUseCase;
+import br.com.demo.application.usecase.cancel.DefaultCancelOrderUseCase;
 import br.com.demo.application.usecase.create.CreateOrderUseCase;
 import br.com.demo.application.usecase.create.DefaultCreateOrderUseCase;
 import br.com.demo.application.usecase.get.DefaultGetOrderByIdUseCase;
@@ -26,6 +28,11 @@ public class UseCaseConfig {
     @Bean
     public ListOrdersUseCase listOrdersUseCase(OrderGateway orderGateway) {
         return new DefaultListOrdersUseCase(orderGateway);
+    }
+
+    @Bean
+    public CancelOrderUseCase cancelOrderUseCase(OrderGateway orderGateway) {
+        return new DefaultCancelOrderUseCase(orderGateway);
     }
 
 }

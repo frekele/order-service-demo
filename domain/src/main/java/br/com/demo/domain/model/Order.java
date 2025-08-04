@@ -69,6 +69,25 @@ public class Order {
         this.touch();
     }
 
+    public void cancel() {
+        if (this.status == OrderStatus.COMPLETED) {
+            throw new IllegalStateException("Cannot cancel a completed order.");
+        }
+        if (this.status == OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Order is already cancelled.");
+        }
+        this.status = OrderStatus.CANCELLED;
+        this.touch();
+    }
+
+    public void retry() {
+        if (this.status != OrderStatus.CANCELLED) {
+            throw new IllegalStateException("Only CANCELLED orders can be retried.");
+        }
+        this.status = OrderStatus.RECEIVED;
+        this.touch();
+    }
+
     private void touch() {
         this.updatedAt = LocalDateTime.now();
     }
