@@ -22,6 +22,12 @@ public class OrderListener {
         try {
             order.startProcessing();
             orderGateway.save(order);
+
+            order.calculateTotalValue();
+            Thread.sleep(5000);
+
+            order.complete();
+            orderGateway.save(order);
             log.info("Order processed and saved successfully: {}", order.getId());
         } catch (Exception e) {
             log.error("Error processing order {}: {}", order.getId(), e.getMessage());
