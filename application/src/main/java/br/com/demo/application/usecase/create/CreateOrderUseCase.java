@@ -1,4 +1,6 @@
 package br.com.demo.application.usecase.create;
 
-public class CreateOrderUseCase {
+import br.com.demo.application.core.UseCase;
+
+public abstract class CreateOrderUseCase extends UseCase<CreateOrderInput, CreateOrderOutput> {
 }
