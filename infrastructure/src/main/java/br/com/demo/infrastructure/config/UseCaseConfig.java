@@ -9,6 +9,8 @@ import br.com.demo.application.usecase.get.DefaultGetOrderByIdUseCase;
 import br.com.demo.application.usecase.get.GetOrderByIdUseCase;
 import br.com.demo.application.usecase.list.DefaultListOrdersUseCase;
 import br.com.demo.application.usecase.list.ListOrdersUseCase;
+import br.com.demo.application.usecase.retry.DefaultRetryOrderUseCase;
+import br.com.demo.application.usecase.retry.RetryOrderUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -35,4 +37,8 @@ public class UseCaseConfig {
         return new DefaultCancelOrderUseCase(orderGateway);
     }
 
+    @Bean
+    public RetryOrderUseCase retryOrderUseCase(OrderGateway orderGateway) {
+        return new DefaultRetryOrderUseCase(orderGateway);
+    }
 }

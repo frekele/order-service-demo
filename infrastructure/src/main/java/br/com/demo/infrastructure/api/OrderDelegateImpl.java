@@ -8,6 +8,8 @@ import br.com.demo.application.usecase.get.GetOrderByIdInput;
 import br.com.demo.application.usecase.get.GetOrderByIdUseCase;
 import br.com.demo.application.usecase.list.ListOrdersInput;
 import br.com.demo.application.usecase.list.ListOrdersUseCase;
+import br.com.demo.application.usecase.retry.RetryOrderInput;
+import br.com.demo.application.usecase.retry.RetryOrderUseCase;
 import br.com.demo.infrastructure.mapper.OrderMapper;
 import br.com.demo.infrastructure.openapi.order.api.OrdersApiDelegate;
 import br.com.demo.infrastructure.openapi.order.model.CreateOrderRequest;
@@ -29,6 +31,7 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
     private final GetOrderByIdUseCase getOrderByIdUseCase;
     private final ListOrdersUseCase listOrdersUseCase;
     private final CancelOrderUseCase cancelOrderUseCase;
+    private final RetryOrderUseCase retryOrderUseCase;
     private final OrderMapper orderMapper;
 
     @Override
@@ -76,6 +79,14 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
         this.cancelOrderUseCase.execute(input);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> retryOrder(UUID id) {
+        final var input = new RetryOrderInput(id);
+        this.retryOrderUseCase.execute(input);
+
+        return ResponseEntity.accepted().build();
     }
 
 }
