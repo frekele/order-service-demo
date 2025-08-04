@@ -117,6 +117,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
 
+  /orders/{id}/cancel:
     delete:
       tags:
         - "Orders"
