@@ -12,12 +12,10 @@ import br.com.demo.application.usecase.list.DefaultListOrdersUseCase;
 import br.com.demo.application.usecase.list.ListOrdersUseCase;
 import br.com.demo.application.usecase.retry.DefaultRetryOrderUseCase;
 import br.com.demo.application.usecase.retry.RetryOrderUseCase;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@EnableCaching
 public class UseCaseConfig {
 
     @Bean
