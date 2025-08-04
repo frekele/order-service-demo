@@ -1,4 +1,5 @@
-package br.com.demo.domain.gateway;
+package br.com.demo.application.gateway;
+
 
 import br.com.demo.domain.model.Order;
 

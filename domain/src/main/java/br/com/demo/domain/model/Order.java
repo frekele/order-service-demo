@@ -3,11 +3,11 @@ package br.com.demo.domain.model;
 
 import br.com.demo.domain.enums.OrderStatus;
 import br.com.demo.domain.valueobject.Money;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -15,46 +15,56 @@ import java.util.List;
 import java.util.UUID;
 
 @Getter
-@Setter
 @Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Order {
 
     private UUID id;
     private String externalOrderId;
+    @Builder.Default
     private List<OrderItem> items = new ArrayList<>();
     private Money totalValue;
     private OrderStatus status;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public void calculateTotal() {
-        Money total = Money.zero();
-        if (items != null) {
-            for (OrderItem item : items) {
-                total = total.add(item.getUnitPrice().multiply(item.getQuantity()));
-            }
+    public static Order create(final String externalOrderId, final List<OrderItem> items) {
+        Order order = new Order();
+        order.id = UUID.randomUUID();
+        order.externalOrderId = externalOrderId;
+        order.items = new ArrayList<>(items);
+        order.status = OrderStatus.RECEIVED;
+        order.createdAt = LocalDateTime.now();
+        order.touch();
+
+        return order;
+    }
+
+    private void calculateTotalValue() {
+        this.totalValue = this.items.stream()
+                .map(item -> item.getUnitPrice().multiply(item.getQuantity()))
+                .reduce(Money.zero(), Money::add);
+    }
+
+    public void startProcessing() {
+        if (this.status != OrderStatus.RECEIVED) {
+            throw new IllegalStateException("Order must be in RECEIVED state to start processing.");
         }
-        this.totalValue = total;
-    }
-
-    public void markAsReceived() {
-        this.status = OrderStatus.RECEIVED;
-        this.touch();
-    }
-
-    public void markAsProcessing() {
+        this.calculateTotalValue();
         this.status = OrderStatus.PROCESSING;
         this.touch();
     }
 
-    public void markAsCompleted() {
+    public void complete() {
+        if (this.status != OrderStatus.PROCESSING) {
+            throw new IllegalStateException("Order must be in PROCESSING state to be completed.");
+        }
         this.status = OrderStatus.COMPLETED;
         this.touch();
     }
 
-    public void markAsFailed() {
+    public void fail() {
         this.status = OrderStatus.FAILED;
         this.touch();
     }
