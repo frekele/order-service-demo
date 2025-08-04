@@ -1,6 +1,8 @@
 package br.com.demo.application.gateway;
 
 
+import br.com.demo.application.core.Pagination;
+import br.com.demo.application.core.SearchQuery;
 import br.com.demo.domain.model.Order;
 
 import java.util.Optional;
@@ -14,4 +16,5 @@ public interface OrderGateway {
 
     Order save(Order order);
 
+    Pagination<Order> findAll(SearchQuery query);
 }
