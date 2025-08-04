@@ -81,8 +81,8 @@ public class Order {
     }
 
     public void retry() {
-        if (this.status != OrderStatus.CANCELLED) {
-            throw new IllegalStateException("Only CANCELLED orders can be retried.");
+        if (this.status != OrderStatus.FAILED) {
+            throw new IllegalStateException("Only FAILED orders can be retried.");
         }
         this.status = OrderStatus.RECEIVED;
         this.touch();
