@@ -2,11 +2,12 @@ package br.com.demo.domain.valueobject;
 
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Getter
-public class Money {
+public class Money implements Serializable {
 
     private final BigDecimal amount;
 
