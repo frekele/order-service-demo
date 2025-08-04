@@ -10,6 +10,8 @@ import br.com.demo.application.usecase.get.DefaultGetOrderByIdUseCase;
 import br.com.demo.application.usecase.get.GetOrderByIdUseCase;
 import br.com.demo.application.usecase.list.DefaultListOrdersUseCase;
 import br.com.demo.application.usecase.list.ListOrdersUseCase;
+import br.com.demo.application.usecase.process.DefaultProcessOrderUseCase;
+import br.com.demo.application.usecase.process.ProcessOrderUseCase;
 import br.com.demo.application.usecase.retry.DefaultRetryOrderUseCase;
 import br.com.demo.application.usecase.retry.RetryOrderUseCase;
 import org.springframework.context.annotation.Bean;
@@ -41,5 +43,10 @@ public class UseCaseConfig {
     @Bean
     public RetryOrderUseCase retryOrderUseCase(OrderGateway orderGateway) {
         return new DefaultRetryOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    public ProcessOrderUseCase processOrderUseCase(OrderGateway orderGateway) {
+        return new DefaultProcessOrderUseCase(orderGateway);
     }
 }

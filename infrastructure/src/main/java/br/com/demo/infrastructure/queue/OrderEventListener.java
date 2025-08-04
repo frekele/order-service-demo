@@ -1,38 +1,34 @@
 package br.com.demo.infrastructure.queue;
 
 import br.com.demo.application.gateway.OrderGateway;
+import br.com.demo.application.usecase.process.ProcessOrderInput;
+import br.com.demo.application.usecase.process.ProcessOrderUseCase;
 import br.com.demo.domain.model.Order;
 import br.com.demo.infrastructure.config.RabbitMQConfig;
 import lombok.AllArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 @AllArgsConstructor
-public class OrderListener {
+public class OrderEventListener {
 
-    private static final Logger log = LoggerFactory.getLogger(OrderListener.class);
+    private final ProcessOrderUseCase processOrderUseCase;
     private final OrderGateway orderGateway;
 
     @RabbitListener(queues = RabbitMQConfig.QUEUE_NAME)
     public void onOrderCreated(final Order order) {
         log.info("Received order to process: {}", order.getId());
         try {
-            order.startProcessing();
-            orderGateway.save(order);
-
-            order.calculateTotalValue();
-            Thread.sleep(5000);
-
-            order.complete();
-            orderGateway.save(order);
+            final var input = new ProcessOrderInput(order);
+            this.processOrderUseCase.execute(input);
             log.info("Order processed and saved successfully: {}", order.getId());
         } catch (Exception e) {
-            log.error("Error processing order {}: {}", order.getId(), e.getMessage());
+            log.error("A critical error occurred while processing order {}: {}", order.getId(), e.getMessage());
             order.fail();
-            orderGateway.save(order);
+            this.orderGateway.save(order);
         }
     }
 }
