@@ -11,8 +11,16 @@
     <groupId>br.com.demo</groupId>
     <artifactId>order-service</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
     <name>order-service</name>
     <description>order-service</description>
+
+    <modules>
+        <module>domain</module>
+        <module>application</module>
+        <module>infrastructure</module>
+    </modules>
+
     <properties>
         <java.version>21</java.version>
     </properties>
