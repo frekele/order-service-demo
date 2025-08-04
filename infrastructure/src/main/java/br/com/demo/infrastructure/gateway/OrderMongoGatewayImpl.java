@@ -3,10 +3,14 @@ package br.com.demo.infrastructure.gateway;
 import br.com.demo.application.core.Pagination;
 import br.com.demo.application.core.SearchQuery;
 import br.com.demo.application.gateway.OrderGateway;
+import br.com.demo.domain.enums.OrderStatus;
 import br.com.demo.domain.model.Order;
 import br.com.demo.infrastructure.mapper.OrderMapper;
+import br.com.demo.infrastructure.persistence.document.OrderDocument;
 import br.com.demo.infrastructure.persistence.repository.OrderMongoRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -43,17 +47,29 @@ public class OrderMongoGatewayImpl implements OrderGateway {
     public Pagination<Order> findAll(SearchQuery query) {
         final Pageable pageable = PageRequest.of(query.page(), query.perPage());
 
-        final var pageResult = this.mongoRepository.findAll(pageable);
+        final var probe = new OrderDocument();
+        if (query.status() != null && !query.status().isBlank()) {
+            probe.setStatus(OrderStatus.valueOf(query.status()));
+        }
+        if (query.externalOrderId() != null && !query.externalOrderId().isBlank()) {
+            probe.setExternalOrderId(query.externalOrderId());
+        }
 
-        final var domainOrders = pageResult.getContent().stream()
-                .map(mapper::toDomain)
-                .collect(Collectors.toList());
+        final Example<OrderDocument> example = Example.of(probe,
+                ExampleMatcher.matching()
+                        .withIgnoreCase()
+                        .withIgnoreNullValues()
+        );
+
+        final var pageResult = this.mongoRepository.findAll(example, pageable);
 
         return new Pagination<>(
                 pageResult.getNumber(),
                 pageResult.getSize(),
                 pageResult.getTotalElements(),
-                domainOrders
+                pageResult.getContent().stream()
+                        .map(mapper::toDomain)
+                        .collect(Collectors.toList())
         );
     }
 }
