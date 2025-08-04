@@ -8,7 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
-@Mapper(uses = {MoneyMapper.class})
+@Mapper(componentModel = "spring", uses = {MoneyMapper.class, OffsetDateTimeMapper.class})
 public abstract class OrderMapper {
 
     public static final OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
@@ -25,4 +25,9 @@ public abstract class OrderMapper {
     @Mapping(source = "unitPrice", target = "unitPrice", qualifiedByName = "bigDecimalToMoney")
     public abstract OrderItem toOrderItemDomain(OrderItemDocument orderItemDocument);
 
+    @Mapping(source = "totalValue", target = "totalValue", qualifiedByName = "moneyToBigDecimal")
+    public abstract br.com.demo.infrastructure.openapi.order.model.OrderResponse toOrderResponse(Order order);
+
+    @Mapping(source = "unitPrice", target = "unitPrice", qualifiedByName = "moneyToBigDecimal")
+    public abstract br.com.demo.infrastructure.openapi.order.model.OrderItemResponse toOrderItemResponse(OrderItem orderItem);
 }

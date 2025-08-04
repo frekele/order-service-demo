@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public class MoneyMapper {
 
     public static final MoneyMapper INSTANCE = Mappers.getMapper(MoneyMapper.class);
