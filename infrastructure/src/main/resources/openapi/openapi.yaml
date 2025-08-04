@@ -1,0 +1,109 @@
+openapi: 3.0.4
+
+info:
+  title: "Order Service API"
+  description: "API for order management, as specified in the technical challenge."
+  version: "1.0.0-SNAPSHOT"
+
+servers:
+  - url: "http://localhost:8080"
+    description: "Local development server"
+
+tags:
+  - name: "Orders"
+    description: "Operations related to orders"
+
+paths:
+  /orders:
+    post:
+      tags:
+        - "Orders" # Associates this operation with the "Orders" tag.
+      summary: "Creates a new order"
+      description: "Receives new order data, processes it, and saves it in the system."
+      operationId: "createOrder"
+      requestBody:
+        description: "JSON object containing the data for the new order to be created."
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateOrderRequest'
+      responses:
+        '201':
+          description: "Order created successfully."
+        '400':
+          description: "Invalid request (e.g., missing or incorrectly formatted fields)."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: "Conflict. An order with the same 'externalOrderId' already exists."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    CreateOrderRequest:
+      type: object
+      properties:
+        externalOrderId:
+          type: string
+          description: "The unique ID of the order from the external system A."
+          example: "EXT-ORD-123456"
+        items:
+          type: array
+          description: "The list of items that make up the order."
+          items:
+            $ref: '#/components/schemas/OrderItemRequest'
+      required:
+        - externalOrderId
+        - items
+
+    OrderItemRequest:
+      type: object
+      properties:
+        productCode:
+          type: string
+          description: "Unique product code."
+          example: "P001"
+        productName:
+          type: string
+          description: "Name of the product."
+          example: "Example Product A"
+        quantity:
+          type: integer
+          description: "Quantity of the product in the order."
+          example: 2
+          format: int32
+        unitPrice:
+          type: number
+          description: "Unit price of the product."
+          example: 29.99
+          format: double
+      required:
+        - productCode
+        - quantity
+        - unitPrice
+
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: "The timestamp when the error occurred."
+        status:
+          type: integer
+          description: "The HTTP status code."
+        error:
+          type: string
+          description: "The HTTP error description (e.g., 'Bad Request')."
+        message:
+          type: string
+          description: "A detailed message about the error."
+        path:
+          type: string
+          description: "The API path that was invoked."

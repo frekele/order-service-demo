@@ -33,12 +33,30 @@
             <artifactId>domain</artifactId>
             <version>${project.version}</version>
         </dependency>
-
         <dependency>
             <groupId>br.com.demo.application</groupId>
             <artifactId>application</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <!-- OpenAPI -->
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+            <version>${springdoc.openapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+            <version>${springdoc.openapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.openapitools.version}</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -66,6 +84,56 @@
                         -javaagent:${settings.localRepository}/org/mockito/mockito-core/${mockito.version}/mockito-core-${mockito.version}.jar
                     </argLine>
                 </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>${openapi-generator-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>order-webmvc-server-api-stub</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/openapi/openapi.yaml</inputSpec>
+                            <output>${project.build.directory}/generated-sources</output>
+                            <cleanupOutput>false</cleanupOutput>
+                            <verbose>false</verbose>
+                            <configOptions>
+                                <useTags>true</useTags>
+                                <delegatePattern>true</delegatePattern>
+                                <interfaceOnly>false</interfaceOnly>
+                                <useSpringBoot3>true</useSpringBoot3>
+                                <reactive>false</reactive>
+                                <implicitHeaders>true</implicitHeaders>
+                                <openApiNullable>true</openApiNullable>
+                                <useBeanValidation>true</useBeanValidation>
+                                <performBeanValidation>true</performBeanValidation>
+                                <unhandlerException>true</unhandlerException>
+                            </configOptions>
+                            <library>spring-boot</library>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>br.com.demo.infrastructure.openapi.order.api</apiPackage>
+                            <modelPackage>br.com.demo.infrastructure.openapi.order.model</modelPackage>
+                            <invokerPackage>br.com.demo.infrastructure.openapi.order.invoker</invokerPackage>
+                            <packageName>br.com.demo.infrastructure.openapi.order</packageName>
+                            <generateApiTests>false</generateApiTests>
+                            <generateModelTests>false</generateModelTests>
+                            <supportingFilesToGenerate>
+                                ApiUtil.java
+                            </supportingFilesToGenerate>
+                            <typeMappings>
+                                <typeMapping>Double=java.math.BigDecimal</typeMapping>
+                            </typeMappings>
+                            <importMappings>
+                                <importMapping>java.lang.Double=java.math.BigDecimal</importMapping>
+                            </importMappings>
+                        </configuration>
+                    </execution>
+                </executions>
+
             </plugin>
 
         </plugins>
