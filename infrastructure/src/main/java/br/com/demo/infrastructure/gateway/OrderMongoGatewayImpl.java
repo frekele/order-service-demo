@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -47,8 +48,8 @@ public class OrderMongoGatewayImpl implements OrderGateway {
             @CachePut(value = "ordersByExternalId", key = "#order.externalOrderId")
     })
     public Order save(Order order) {
-        final var document = mapper.toDocument(order);
-        final var savedDocument = mongoRepository.save(document);
+        final OrderDocument document = mapper.toDocument(order);
+        final OrderDocument savedDocument = mongoRepository.save(document);
         return mapper.toDomain(savedDocument);
     }
 
@@ -56,7 +57,7 @@ public class OrderMongoGatewayImpl implements OrderGateway {
     public Pagination<Order> findAll(SearchQuery query) {
         final Pageable pageable = PageRequest.of(query.page(), query.perPage());
 
-        final var probe = new OrderDocument();
+        final OrderDocument probe = new OrderDocument();
         if (query.status() != null && !query.status().isBlank()) {
             probe.setStatus(OrderStatus.valueOf(query.status()));
         }
@@ -70,7 +71,7 @@ public class OrderMongoGatewayImpl implements OrderGateway {
                         .withIgnoreNullValues()
         );
 
-        final var pageResult = this.mongoRepository.findAll(example, pageable);
+        final Page<OrderDocument> pageResult = this.mongoRepository.findAll(example, pageable);
 
         return new Pagination<>(
                 pageResult.getNumber(),

@@ -1,6 +1,7 @@
 package br.com.demo.application.usecase.retry;
 
 import br.com.demo.application.gateway.OrderGateway;
+import br.com.demo.domain.model.Order;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -10,7 +11,7 @@ public class DefaultRetryOrderUseCase extends RetryOrderUseCase {
 
     @Override
     public Void execute(RetryOrderInput anIn) {
-        final var order = this.orderGateway.findById(anIn.id())
+        final Order order = this.orderGateway.findById(anIn.id())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         order.retry();

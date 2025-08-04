@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Getter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -42,22 +44,24 @@ public class Order implements Serializable {
         return order;
     }
 
-    private void calculateTotalValue() {
+    public void calculateTotalValue() {
+        log.info("Calculating total value");
         this.totalValue = this.items.stream()
                 .map(item -> item.getUnitPrice().multiply(item.getQuantity()))
                 .reduce(Money.zero(), Money::add);
     }
 
     public void startProcessing() {
+        log.info("Starting processing");
         if (this.status != OrderStatus.RECEIVED) {
             throw new IllegalStateException("Order must be in RECEIVED state to start processing.");
         }
-        this.calculateTotalValue();
         this.status = OrderStatus.PROCESSING;
         this.touch();
     }
 
     public void complete() {
+        log.info("Completing order");
         if (this.status != OrderStatus.PROCESSING) {
             throw new IllegalStateException("Order must be in PROCESSING state to be completed.");
         }
@@ -66,11 +70,13 @@ public class Order implements Serializable {
     }
 
     public void fail() {
+        log.info("Failing order");
         this.status = OrderStatus.FAILED;
         this.touch();
     }
 
     public void cancel() {
+        log.info("Canceling order");
         if (this.status == OrderStatus.COMPLETED) {
             throw new IllegalStateException("Cannot cancel a completed order.");
         }
@@ -82,6 +88,7 @@ public class Order implements Serializable {
     }
 
     public void retry() {
+        log.info("Retrying order");
         if (this.status != OrderStatus.FAILED) {
             throw new IllegalStateException("Only FAILED orders can be retried.");
         }

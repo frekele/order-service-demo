@@ -7,6 +7,7 @@ import br.com.demo.domain.model.OrderItem;
 import br.com.demo.domain.valueobject.Money;
 import lombok.AllArgsConstructor;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class DefaultCreateOrderUseCase extends CreateOrderUseCase {
             throw new IllegalArgumentException("Request with external ID " + input.externalOrderId() + " already exists.");
         });
 
-        var orderItems = input.items().stream()
+        List<OrderItem> orderItems = input.items().stream()
                 .map(item -> OrderItem.builder()
                         .productCode(item.productCode())
                         .productName(item.productName())
