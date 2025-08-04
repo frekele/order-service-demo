@@ -1,4 +1,4 @@
-package br.com.demo.orderservice;
+package br.com.demo.infrastructure;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
