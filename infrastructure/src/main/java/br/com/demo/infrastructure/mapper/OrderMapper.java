@@ -6,12 +6,9 @@ import br.com.demo.infrastructure.persistence.document.OrderDocument;
 import br.com.demo.infrastructure.persistence.document.OrderItemDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring", uses = {MoneyMapper.class, OffsetDateTimeMapper.class})
 public abstract class OrderMapper {
-
-    public static final OrderMapper INSTANCE = Mappers.getMapper(OrderMapper.class);
 
     @Mapping(source = "totalValue", target = "totalValue", qualifiedByName = "moneyToBigDecimal")
     public abstract OrderDocument toDocument(Order order);
