@@ -9,6 +9,9 @@ import br.com.demo.infrastructure.mapper.OrderMapper;
 import br.com.demo.infrastructure.persistence.document.OrderDocument;
 import br.com.demo.infrastructure.persistence.repository.OrderMongoRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.PageRequest;
@@ -27,16 +30,22 @@ public class OrderMongoGatewayImpl implements OrderGateway {
     private final OrderMapper mapper;
 
     @Override
+    @Cacheable(value = "orders", key = "#id")
     public Optional<Order> findById(UUID id) {
         return mongoRepository.findById(id).map(mapper::toDomain);
     }
 
     @Override
+    @Cacheable(value = "ordersByExternalId", key = "#externalOrderId")
     public Optional<Order> findByExternalOrderId(String externalOrderId) {
         return mongoRepository.findByExternalOrderId(externalOrderId).map(mapper::toDomain);
     }
 
     @Override
+    @Caching(put = {
+            @CachePut(value = "orders", key = "#order.id"),
+            @CachePut(value = "ordersByExternalId", key = "#order.externalOrderId")
+    })
     public Order save(Order order) {
         final var document = mapper.toDocument(order);
         final var savedDocument = mongoRepository.save(document);

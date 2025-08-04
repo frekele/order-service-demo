@@ -23,6 +23,12 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
 
+  redis:
+    image: redis:latest
+    container_name: order-service-redis
+    ports:
+      - "6379:6379"
+
 volumes:
   mongo-data:
     driver: local
