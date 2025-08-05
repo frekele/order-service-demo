@@ -1,5 +1,6 @@
 package br.com.demo.application.usecase.process;
 
+import br.com.demo.application.gateway.NotificationGateway;
 import br.com.demo.application.gateway.OrderGateway;
 import lombok.AllArgsConstructor;
 
@@ -7,6 +8,7 @@ import lombok.AllArgsConstructor;
 public class DefaultProcessOrderUseCase extends ProcessOrderUseCase {
 
     private final OrderGateway orderGateway;
+    private final NotificationGateway notificationGateway;
 
     @Override
     public Void execute(ProcessOrderInput input) {
@@ -16,14 +18,9 @@ public class DefaultProcessOrderUseCase extends ProcessOrderUseCase {
         this.orderGateway.save(order);
 
         order.calculateTotalValue();
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-
         order.complete();
+        this.notificationGateway.notifyOrderCompleted(order);
+
         this.orderGateway.save(order);
 
         return null;

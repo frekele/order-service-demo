@@ -1,5 +1,6 @@
 package br.com.demo.infrastructure.config;
 
+import br.com.demo.application.gateway.NotificationGateway;
 import br.com.demo.application.gateway.OrderEventGateway;
 import br.com.demo.application.gateway.OrderGateway;
 import br.com.demo.application.usecase.cancel.CancelOrderUseCase;
@@ -16,9 +17,15 @@ import br.com.demo.application.usecase.retry.DefaultRetryOrderUseCase;
 import br.com.demo.application.usecase.retry.RetryOrderUseCase;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class UseCaseConfig {
+
+    @Bean
+    public RestTemplate restTemplate() {
+        return new RestTemplate();
+    }
 
     @Bean
     public CreateOrderUseCase createOrderUseCase(OrderGateway orderGateway, OrderEventGateway orderEventGateway) {
@@ -46,7 +53,7 @@ public class UseCaseConfig {
     }
 
     @Bean
-    public ProcessOrderUseCase processOrderUseCase(OrderGateway orderGateway) {
-        return new DefaultProcessOrderUseCase(orderGateway);
+    public ProcessOrderUseCase processOrderUseCase(OrderGateway orderGateway, NotificationGateway notificationGateway) {
+        return new DefaultProcessOrderUseCase(orderGateway, notificationGateway);
     }
 }
