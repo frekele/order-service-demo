@@ -7,6 +7,7 @@ import br.com.demo.domain.model.Order;
 import br.com.demo.infrastructure.config.RabbitMQConfig;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
@@ -24,11 +25,12 @@ public class OrderEventListener {
         try {
             final var input = new ProcessOrderInput(order);
             this.processOrderUseCase.execute(input);
-            log.info("Order processed and saved successfully: {}", order.getId());
+            log.info("Order processed successfully: {}", order.getId());
         } catch (Exception e) {
             log.error("A critical error occurred while processing order {}: {}", order.getId(), e.getMessage());
             order.fail();
             this.orderGateway.save(order);
+            throw new AmqpRejectAndDontRequeueException(e);
         }
     }
 }
