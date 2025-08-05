@@ -33,7 +33,6 @@ public class OrdersApiIT extends AbstractIntegrationTest {
 
     @BeforeEach
     void cleanup() {
-        // Garante que a base de dados está limpa antes de cada teste
         orderMongoRepository.deleteAll();
     }
 
@@ -58,7 +57,6 @@ public class OrdersApiIT extends AbstractIntegrationTest {
 
         assertEquals(0, orderMongoRepository.count());
 
-        // when
         final var request = post("/orders")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestBody);
@@ -67,11 +65,8 @@ public class OrdersApiIT extends AbstractIntegrationTest {
                 .andExpect(status().isCreated()) // A resposta da API deve ser imediata
                 .andExpect(header().exists("Location"));
 
-        // then
-        // Como o processamento é assíncrono, esperamos até que o pedido apareça na base de dados.
         await().atMost(10, SECONDS).until(() -> orderMongoRepository.count() > 0);
 
-        // Verificamos se o pedido foi guardado corretamente após ser consumido pelo listener.
         final var savedOrder = orderMongoRepository.findByExternalOrderId(externalOrderId).get();
 
         assertEquals(1, orderMongoRepository.count());
