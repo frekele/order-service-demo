@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @Component
-public class OrderEventRabbitMQGatewayImpl implements OrderEventGateway {
+public class OrderEventRabbitMQGateway implements OrderEventGateway {
 
     private final RabbitTemplate rabbitTemplate;
 

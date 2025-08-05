@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
-public class OrderMongoGatewayImpl implements OrderGateway {
+public class OrderMongoGateway implements OrderGateway {
 
     private final OrderMongoRepository mongoRepository;
     private final OrderMapper mapper;
