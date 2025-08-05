@@ -1,5 +1,6 @@
 package br.com.demo.domain.valueobject;
 
+import lombok.Builder;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ public class Money implements Serializable {
 
     private final BigDecimal amount;
 
+    @Builder
     private Money(BigDecimal amount) {
         this.amount = amount.setScale(2, RoundingMode.HALF_UP);
     }
