@@ -2,6 +2,7 @@ package br.com.demo.application.usecase.process;
 
 import br.com.demo.application.gateway.NotificationGateway;
 import br.com.demo.application.gateway.OrderGateway;
+import br.com.demo.domain.model.Order;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -12,7 +13,7 @@ public class DefaultProcessOrderUseCase extends ProcessOrderUseCase {
 
     @Override
     public Void execute(ProcessOrderInput input) {
-        final var order = input.order();
+        final Order order = input.order();
 
         order.startProcessing();
         this.orderGateway.save(order);
