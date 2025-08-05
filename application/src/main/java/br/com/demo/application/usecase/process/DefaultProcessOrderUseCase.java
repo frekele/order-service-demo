@@ -9,8 +9,8 @@ public class DefaultProcessOrderUseCase extends ProcessOrderUseCase {
     private final OrderGateway orderGateway;
 
     @Override
-    public Void execute(ProcessOrderInput anIn) {
-        final var order = anIn.order();
+    public Void execute(ProcessOrderInput input) {
+        final var order = input.order();
 
         order.startProcessing();
         this.orderGateway.save(order);

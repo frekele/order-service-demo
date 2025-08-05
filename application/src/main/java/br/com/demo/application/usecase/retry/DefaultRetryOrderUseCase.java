@@ -10,8 +10,8 @@ public class DefaultRetryOrderUseCase extends RetryOrderUseCase {
     private final OrderGateway orderGateway;
 
     @Override
-    public Void execute(RetryOrderInput anIn) {
-        final Order order = this.orderGateway.findById(anIn.id())
+    public Void execute(RetryOrderInput input) {
+        final Order order = this.orderGateway.findById(input.id())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         order.retry();

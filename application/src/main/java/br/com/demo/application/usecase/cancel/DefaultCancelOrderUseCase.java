@@ -10,8 +10,8 @@ public class DefaultCancelOrderUseCase extends CancelOrderUseCase {
     private final OrderGateway orderGateway;
 
     @Override
-    public Void execute(CancelOrderInput anIn) {
-        final Order order = this.orderGateway.findById(anIn.id())
+    public Void execute(CancelOrderInput input) {
+        final Order order = this.orderGateway.findById(input.id())
                 .orElseThrow(() -> new RuntimeException("Order not found"));
 
         order.cancel();

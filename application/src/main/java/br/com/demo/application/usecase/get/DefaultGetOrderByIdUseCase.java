@@ -9,8 +9,8 @@ public class DefaultGetOrderByIdUseCase extends GetOrderByIdUseCase {
     private final OrderGateway orderGateway;
 
     @Override
-    public GetOrderByIdOutput execute(GetOrderByIdInput anIn) {
-        return this.orderGateway.findById(anIn.id())
+    public GetOrderByIdOutput execute(GetOrderByIdInput input) {
+        return this.orderGateway.findById(input.id())
                 .map(GetOrderByIdOutput::from)
                 .orElseThrow(() -> new RuntimeException("Order not found"));
     }

@@ -10,8 +10,8 @@ public class DefaultListOrdersUseCase extends ListOrdersUseCase {
     private final OrderGateway orderGateway;
 
     @Override
-    public ListOrdersOutput execute(ListOrdersInput anIn) {
-        final var aQuery = new SearchQuery(anIn.page(), anIn.size(), anIn.status(), anIn.externalOrderId());
+    public ListOrdersOutput execute(ListOrdersInput input) {
+        final var aQuery = new SearchQuery(input.page(), input.size(), input.status(), input.externalOrderId());
         final var paginationResult = this.orderGateway.findAll(aQuery);
         return ListOrdersOutput.from(paginationResult.items());
     }
