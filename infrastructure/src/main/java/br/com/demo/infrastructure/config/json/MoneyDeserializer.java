@@ -9,9 +9,13 @@ import java.io.IOException;
 import java.math.BigDecimal;
 
 public class MoneyDeserializer extends JsonDeserializer<Money> {
+
     @Override
     public Money deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
         BigDecimal value = p.getDecimalValue();
+        if (value == null) {
+            return Money.zero();
+        }
         return Money.of(value);
     }
 }

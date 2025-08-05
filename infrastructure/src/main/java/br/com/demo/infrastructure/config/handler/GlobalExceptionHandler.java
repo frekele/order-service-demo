@@ -3,6 +3,7 @@ package br.com.demo.infrastructure.config.handler;
 import br.com.demo.domain.exception.DomainException;
 import br.com.demo.domain.exception.NotFoundException;
 import br.com.demo.infrastructure.openapi.order.model.ErrorResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,6 +15,7 @@ import org.springframework.web.context.request.WebRequest;
 import java.time.OffsetDateTime;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -41,11 +43,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex, WebRequest request) {
+        log.error("An unexpected error occurred processing request: {}", request.getDescription(false), ex);
         final var errorResponse = new ErrorResponse()
                 .timestamp(OffsetDateTime.now())
                 .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
                 .error(HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase())
-                .message("An unexpected internal server error has occurred. - " + ex.getMessage())
+                .message("An unexpected internal server error has occurred.")
                 .path(request.getDescription(false).replace("uri=", ""));
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }

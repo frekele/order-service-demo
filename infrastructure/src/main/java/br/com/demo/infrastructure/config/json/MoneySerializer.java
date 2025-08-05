@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import java.io.IOException;
 
 public class MoneySerializer extends JsonSerializer<Money> {
+
     @Override
     public void serialize(Money value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
         if (value != null) {
