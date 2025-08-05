@@ -39,6 +39,8 @@
         <jackson-databind-nullable.openapitools.version>0.2.6</jackson-databind-nullable.openapitools.version>
         <commons-lang3.version>3.18.0</commons-lang3.version>
         <jacoco.version>0.8.13</jacoco.version>
+        <testcontainers.version>1.19.8</testcontainers.version>
+        <awaitility.version>4.2.1</awaitility.version>
     </properties>
 
     <dependencies>
