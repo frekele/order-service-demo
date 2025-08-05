@@ -22,7 +22,7 @@ public class DefaultCreateOrderUseCase extends CreateOrderUseCase {
             throw new IllegalArgumentException("Request with external ID " + input.externalOrderId() + " already exists.");
         });
 
-        List<OrderItem> orderItems = input.items().stream()
+        final List<OrderItem> orderItems = input.items().stream()
                 .map(item -> OrderItem.builder()
                         .productCode(item.productCode())
                         .productName(item.productName())

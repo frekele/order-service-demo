@@ -3,23 +3,26 @@ package br.com.demo.infrastructure.api;
 import br.com.demo.application.usecase.cancel.CancelOrderInput;
 import br.com.demo.application.usecase.cancel.CancelOrderUseCase;
 import br.com.demo.application.usecase.create.CreateOrderInput;
+import br.com.demo.application.usecase.create.CreateOrderOutput;
 import br.com.demo.application.usecase.create.CreateOrderUseCase;
 import br.com.demo.application.usecase.get.GetOrderByIdInput;
+import br.com.demo.application.usecase.get.GetOrderByIdOutput;
 import br.com.demo.application.usecase.get.GetOrderByIdUseCase;
 import br.com.demo.application.usecase.list.ListOrdersInput;
+import br.com.demo.application.usecase.list.ListOrdersOutput;
 import br.com.demo.application.usecase.list.ListOrdersUseCase;
 import br.com.demo.application.usecase.retry.RetryOrderInput;
 import br.com.demo.application.usecase.retry.RetryOrderUseCase;
 import br.com.demo.infrastructure.mapper.OrderMapper;
 import br.com.demo.infrastructure.openapi.order.api.OrdersApiDelegate;
 import br.com.demo.infrastructure.openapi.order.model.CreateOrderRequest;
+import br.com.demo.infrastructure.openapi.order.model.OrderListPage;
 import br.com.demo.infrastructure.openapi.order.model.OrderResponse;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -36,7 +39,7 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
 
     @Override
     public ResponseEntity<Void> createOrder(CreateOrderRequest openApiRequest) {
-        var useCaseInput = new CreateOrderInput(
+        final CreateOrderInput useCaseInput = new CreateOrderInput(
                 openApiRequest.getExternalOrderId(),
                 openApiRequest.getItems().stream()
                         .map(item -> new CreateOrderInput.OrderItemInput(
@@ -48,34 +51,32 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
                         .collect(Collectors.toList())
         );
 
-        final var output = createOrderUseCase.execute(useCaseInput);
+        final CreateOrderOutput output = createOrderUseCase.execute(useCaseInput);
 
         return ResponseEntity.created(URI.create("/orders/" + output.orderId())).build();
     }
 
     @Override
     public ResponseEntity<OrderResponse> getOrderById(UUID id) {
-        final var input = new GetOrderByIdInput(id);
-        final var output = getOrderByIdUseCase.execute(input);
-        final var response = orderMapper.toOrderResponse(output.order());
+        final GetOrderByIdInput input = new GetOrderByIdInput(id);
+        final GetOrderByIdOutput output = getOrderByIdUseCase.execute(input);
+        final OrderResponse response = orderMapper.toOrderResponse(output.order());
         return ResponseEntity.ok(response);
     }
 
     @Override
-    public ResponseEntity<List<OrderResponse>> listOrders(String status, String externalOrderId, Integer page, Integer size) {
-        final var anIn = ListOrdersInput.from(status, externalOrderId, page, size);
-        final var output = this.listOrdersUseCase.execute(anIn);
+    public ResponseEntity<OrderListPage> listOrders(String status, String externalOrderId, Integer page, Integer size) {
+        final ListOrdersInput input = ListOrdersInput.from(status, externalOrderId, page, size);
+        final ListOrdersOutput output = this.listOrdersUseCase.execute(input);
 
-        final var response = output.orders().stream()
-                .map(orderMapper::toOrderResponse)
-                .collect(Collectors.toList());
+        final OrderListPage response = orderMapper.toOrderListPage(output.pagination());
 
         return ResponseEntity.ok(response);
     }
 
     @Override
     public ResponseEntity<Void> cancelOrder(UUID id) {
-        final var input = new CancelOrderInput(id);
+        final CancelOrderInput input = new CancelOrderInput(id);
         this.cancelOrderUseCase.execute(input);
 
         return ResponseEntity.noContent().build();
@@ -83,7 +84,7 @@ public class OrderDelegateImpl implements OrdersApiDelegate {
 
     @Override
     public ResponseEntity<Void> retryOrder(UUID id) {
-        final var input = new RetryOrderInput(id);
+        final RetryOrderInput input = new RetryOrderInput(id);
         this.retryOrderUseCase.execute(input);
 
         return ResponseEntity.accepted().build();

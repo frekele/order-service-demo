@@ -84,9 +84,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/OrderResponse'
+                $ref: '#/components/schemas/OrderListPage'
 
   /orders/{id}:
     get:
@@ -241,6 +239,25 @@ components:
           type: integer
         unitPrice:
           type: number
+
+    OrderListPage:
+      type: object
+      properties:
+        currentPage:
+          type: integer
+          description: "The current page number."
+        perPage:
+          type: integer
+          description: "The number of items per page."
+        total:
+          type: integer
+          format: int64
+          description: "The total number of items available."
+        items:
+          type: array
+          description: "The list of orders for the current page."
+          items:
+            $ref: '#/components/schemas/OrderResponse'
 
     ErrorResponse:
       type: object

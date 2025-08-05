@@ -13,6 +13,6 @@ public class DefaultListOrdersUseCase extends ListOrdersUseCase {
     public ListOrdersOutput execute(ListOrdersInput input) {
         final var aQuery = new SearchQuery(input.page(), input.size(), input.status(), input.externalOrderId());
         final var paginationResult = this.orderGateway.findAll(aQuery);
-        return ListOrdersOutput.from(paginationResult.items());
+        return ListOrdersOutput.from(paginationResult);
     }
 }
