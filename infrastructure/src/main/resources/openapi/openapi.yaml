@@ -171,7 +171,7 @@ components:
         externalOrderId:
           type: string
           description: "The unique ID of the order from the external system A."
-          example: "EXT-ORD-123456"
+          example: "123456789"
         items:
           type: array
           description: "The list of items that make up the order."
