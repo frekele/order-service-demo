@@ -2,6 +2,7 @@ package br.com.demo.application.usecase.create;
 
 import br.com.demo.application.gateway.OrderEventGateway;
 import br.com.demo.application.gateway.OrderGateway;
+import br.com.demo.domain.exception.DomainException;
 import br.com.demo.domain.model.Order;
 import br.com.demo.domain.model.OrderItem;
 import br.com.demo.domain.valueobject.Money;
@@ -19,8 +20,9 @@ public class DefaultCreateOrderUseCase extends CreateOrderUseCase {
     @Override
     public CreateOrderOutput execute(CreateOrderInput input) {
         this.orderGateway.findByExternalOrderId(input.externalOrderId()).ifPresent(order -> {
-            throw new IllegalArgumentException("Request with external ID " + input.externalOrderId() + " already exists.");
+            throw new DomainException("Order with external ID " + input.externalOrderId() + " already exists.");
         });
+
 
         final List<OrderItem> orderItems = input.items().stream()
                 .map(item -> OrderItem.builder()

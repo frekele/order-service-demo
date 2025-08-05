@@ -2,6 +2,7 @@ package br.com.demo.domain.model;
 
 
 import br.com.demo.domain.enums.OrderStatus;
+import br.com.demo.domain.exception.DomainException;
 import br.com.demo.domain.valueobject.Money;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -54,7 +55,7 @@ public class Order implements Serializable {
     public void startProcessing() {
         log.info("Starting processing");
         if (this.status != OrderStatus.RECEIVED) {
-            throw new IllegalStateException("Order must be in RECEIVED state to start processing.");
+            throw new DomainException("Order must be in RECEIVED state to start processing.");
         }
         this.status = OrderStatus.PROCESSING;
         this.touch();
@@ -63,7 +64,7 @@ public class Order implements Serializable {
     public void complete() {
         log.info("Completing order");
         if (this.status != OrderStatus.PROCESSING) {
-            throw new IllegalStateException("Order must be in PROCESSING state to be completed.");
+            throw new DomainException("Order must be in PROCESSING state to be completed.");
         }
         this.status = OrderStatus.COMPLETED;
         this.touch();
@@ -78,10 +79,10 @@ public class Order implements Serializable {
     public void cancel() {
         log.info("Canceling order");
         if (this.status == OrderStatus.COMPLETED) {
-            throw new IllegalStateException("Cannot cancel a completed order.");
+            throw new DomainException("Cannot cancel a completed order.");
         }
         if (this.status == OrderStatus.CANCELLED) {
-            throw new IllegalStateException("Order is already cancelled.");
+            throw new DomainException("Order is already cancelled.");
         }
         this.status = OrderStatus.CANCELLED;
         this.touch();
@@ -90,7 +91,7 @@ public class Order implements Serializable {
     public void retry() {
         log.info("Retrying order");
         if (this.status != OrderStatus.FAILED) {
-            throw new IllegalStateException("Only FAILED orders can be retried.");
+            throw new DomainException("Only FAILED orders can be retried.");
         }
         this.status = OrderStatus.RECEIVED;
         this.touch();
