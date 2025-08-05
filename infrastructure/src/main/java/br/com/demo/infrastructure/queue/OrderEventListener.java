@@ -23,7 +23,7 @@ public class OrderEventListener {
     public void onOrderCreated(final Order order) {
         log.info("Received order to process: {}", order.getId());
         try {
-            final var input = new ProcessOrderInput(order);
+            final ProcessOrderInput input = new ProcessOrderInput(order);
             this.processOrderUseCase.execute(input);
             log.info("Order processed successfully: {}", order.getId());
         } catch (Exception e) {
