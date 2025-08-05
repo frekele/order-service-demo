@@ -26,6 +26,53 @@ Other key patterns and concepts used:
 * **Distributed Caching:** Redis is used to optimize read operations, improving performance.
 * **Unit and Integration Testing:** The project includes a solid foundation of unit and integration tests to ensure code quality.
 
+## Architecture Diagram (C4 Model - Container Level)
+
+This diagram provides a high-level view of the system's architecture, focusing on the communication between its major components.
+
+```mermaid
+graph TD
+    subgraph "Clients / External Systems"
+        direction LR
+        product_a["<b>Product A</b><br/>(External System)<br/>Submits new orders"]
+        product_b["<b>Product B</b><br/>(External System)<br/>Receives processed order notifications"]
+    end
+
+    subgraph "Order Service Ecosystem"
+        direction TB
+        
+        subgraph "Your Application"
+             order_service["<b>Order Service</b><br/>(Spring Boot Application)<br/>- Manages order lifecycle<br/>- Calculates totals<br/>- Orchestrates communication"]
+        end
+
+        subgraph "Supporting Infrastructure (Managed by Docker)"
+            direction LR
+            mongodb["<b>MongoDB</b><br/>Primary Database"]
+            rabbitmq["<b>RabbitMQ</b><br/>Message Broker"]
+            redis["<b>Redis</b><br/>Cache"]
+        end
+    end
+
+    %% --- Communication Flows ---
+    product_a -- "1. Submits Order<br/>(HTTPS/JSON)" --> order_service
+    order_service -- "2. Publishes 'OrderCreated' event<br/>(AMQP)" --> rabbitmq
+    order_service -- "3. Consumes event for async processing<br/>(AMQP)" --> rabbitmq
+    order_service -- "4. Persists and updates order state<br/>(Mongo Wire Protocol)" --> mongodb
+    order_service -- "5. Caches frequently accessed orders<br/>(Redis Protocol)" --> redis
+    order_service -- "6. Notifies of completed order<br/>(HTTPS/JSON Webhook)" --> product_b
+    product_a -- "Queries order status<br/>(HTTPS/JSON)" --> order_service
+
+```
+
+### Diagram Explanation
+
+This high-level diagram shows the **Order Service** as the central piece that orchestrates the entire communication flow:
+
+1.  **Input:** **Product A** communicates with the service exclusively via **HTTPS**, sending new orders and performing queries.
+2.  **Asynchronous Processing:** To ensure performance and resilience, the service does not process the order immediately. Instead, it publishes an event to **RabbitMQ** (via AMQP protocol) and consumes it asynchronously.
+3.  **Persistence & Caching:** During processing, the service interacts with **MongoDB** to save and update the state of the orders and with **Redis** to optimize reads by caching frequently accessed orders.
+4.  **Output:** At the end of the process, the service actively notifies **Product B** by sending the completed order data via a **Webhook (HTTPS)**.
+
 ## Integration Flow
 
 The service implements the full end-to-end flow, from receiving an order to making it available to external systems.
