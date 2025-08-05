@@ -1,6 +1,7 @@
 package br.com.demo.domain.valueobject;
 
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.io.Serializable;
@@ -8,6 +9,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 @Getter
+@EqualsAndHashCode
 public class Money implements Serializable {
 
     private final BigDecimal amount;
