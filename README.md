@@ -66,7 +66,7 @@ The service implements the full end-to-end flow, from receiving an order to maki
 
 1.  **Clone the Repository:**
     ```sh
-    git clone https://github.com/frekele/order-service-demo.git
+    git clone [https://github.com/frekele/order-service-demo.git](https://github.com/frekele/order-service-demo.git)
     cd order-service-demo
     ```
 
@@ -99,6 +99,8 @@ After starting the application, you can access the interactive API documentation
 * **Swagger UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
 
 From this interface, you can explore all endpoints and execute test requests directly.
+
+* **Postman Guide:** For detailed examples on how to call each endpoint with Postman, including success and error scenarios, see our guide: **[How to Call the API](how-to-call-api.md)**
 
 ## Running the Tests
 
