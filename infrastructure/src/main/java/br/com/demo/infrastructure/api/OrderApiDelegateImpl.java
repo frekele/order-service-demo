@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Component
-public class OrderDelegateImpl implements OrdersApiDelegate {
+public class OrderApiDelegateImpl implements OrdersApiDelegate {
 
     private final CreateOrderUseCase createOrderUseCase;
     private final GetOrderByIdUseCase getOrderByIdUseCase;
