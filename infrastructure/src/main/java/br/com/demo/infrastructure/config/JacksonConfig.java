@@ -1,4 +1,4 @@
-package br.com.demo.infrastructure;
+package br.com.demo.infrastructure.config;
 
 import br.com.demo.domain.valueobject.Money;
 import br.com.demo.infrastructure.config.json.MoneyDeserializer;
